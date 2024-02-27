@@ -1,0 +1,34 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Parameters:
+  BucketName:
+    Type: String
+    Description: Name for the S3 bucket
+
+Resources:
+  MyS3Bucket:
+    Type: "AWS::S3::Bucket"
+    Properties:
+      BucketName: !Ref BucketName
+      AccessControl: Private
+
+  MyS3BucketPolicy:
+    Type: "AWS::S3::BucketPolicy"
+    Properties:
+      Bucket: !Ref MyS3Bucket
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal: "*"
+            Action: "s3:GetObject"
+            Resource: !Sub "arn:aws:s3:::${MyS3Bucket}/*"
+
+  MyS3BucketLogging:
+    Type: "AWS::S3::Bucket"
+    Properties:
+      BucketName: !Sub "${BucketName}-logs"
+      AccessControl: LogDeliveryWrite
+      LoggingConfiguration:
+        DestinationBucketName: !Ref MyS3Bucket
+        LogFilePrefix: "logs/"
