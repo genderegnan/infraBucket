@@ -1,0 +1,24 @@
+name: Deploy S3 Prod
+on: 
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  id-token: write
+  contents: read
+  
+jobs:
+    environment_matrix:
+        strategy:
+          matrix:
+            environment: [prod]
+            include:
+              - environment: prod
+            
+        uses: ./.github/workflows/general_pipeline.yaml
+        with:
+          environment: ${{ matrix.environment }}
+        secrets: inherit

@@ -1,0 +1,29 @@
+name: Reusable workflow general Pipeline
+on:
+    workflow_call:
+      inputs:
+        environment:
+          required: true
+          type: string
+
+jobs:
+  deploy:
+    name: release-chatbot
+    environment: ${{ inputs.environment }}
+    runs-on: ubuntu-latest      
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          role-session-name: common-infra
+          aws-region: ${{ secrets.AWS_REGION }}
+      - name:  Create S3 Bucket 
+        run: >
+          aws cloudformation deploy --stack-name common-infra-s3 --template-file ./templates/s3.yaml
+          --parameter-overrides
+          Environment=$ENVIRONMENT
+          --capabilities CAPABILITY_NAMED_IAM
+     
