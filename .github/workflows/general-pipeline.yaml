@@ -24,6 +24,6 @@ jobs:
         run: >
           aws cloudformation deploy --stack-name common-infra-s3 --template-file ./templates/s3.yaml
           --parameter-overrides
-          Environment=$ENVIRONMENT
+          BucketName="Backup-S3"
           --capabilities CAPABILITY_NAMED_IAM
      
